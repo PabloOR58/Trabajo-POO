@@ -6,13 +6,13 @@ import pandas as pd
 # Configuración de rutas para Mac
 ruta_raiz = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
 if ruta_raiz not in sys.path:
-    sys.path.append(ruta_raiz)
+    sys.path.insert(0, ruta_raiz)
 
 # Importaciones del proyecto
 try:
     from src.models.incidencia import (
         IncidenciaPhishing, IncidenciaMalware, IncidenciaFuerzaBruta,
-        IncidenciaFugaDatos, IncidenciaAccesoNoAutorizado, grado_incidencia
+        IncidenciaFugaDatos, IncidenciaAccesoNoAutorizado
     )
     from src.controllers.gestor_datos import GestorIncidencias
     from src.utils.excepciones import ValidacionException, GestorDatosException
@@ -98,7 +98,7 @@ def main():
     with col1:
         filtro_tipo = st.selectbox("Filtrar por Tipo", ["Todos"] + ["Phishing", "Malware", "Fuerza Bruta", "Fuga de Datos", "Acceso No Autorizado"])
     with col2:
-        filtro_riesgo = st.selectbox("Filtrar por Riesgo", ["Todos"] + list(grado_incidencia.__dict__.values()))
+        filtro_riesgo = st.selectbox("Filtrar por Riesgo", ["Todos", "ALTO", "MEDIO", "CRITICO"])
 
     # Obtener DataFrame
     df = gestor.to_dataframe()
