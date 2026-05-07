@@ -124,7 +124,10 @@ class GestorIncidencias:
             return []
 
         with open(ruta, "r", encoding="utf-8") as archivo:
-            datos = json.load(archivo)
+            try:
+                datos = json.load(archivo)
+            except json.JSONDecodeError:
+                return []  # Si el JSON está vacío o inválido, devolver lista vacía
 
         for item in datos:
             incidencia = self._crear_incidencia_desde_dict(item)
