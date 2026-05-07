@@ -7,6 +7,7 @@ class Incidencia(ABC):
         self.descripcion = descripcion
         self.fecha = fecha
         self.afectados = afectados
+        self.riesgo = None
 
     @abstractmethod
     def calcular_riesgo(self):
@@ -16,12 +17,6 @@ class Incidencia(ABC):
     def get_recomendaciones(self):
         pass
 
-class grado_incidencia:
-    BAJO = "BAJO"
-    MEDIO = "MEDIO"
-    ALTO = "ALTO"
-    CRITICO = "CRITICO"
-
 class IncidenciaPhishing(Incidencia):
     def __init__(self, id, titulo, desc, fecha, afec, url_maliciosa, emails_afectados):
         super().__init__(id, titulo, desc, fecha, afec)
@@ -29,7 +24,9 @@ class IncidenciaPhishing(Incidencia):
         self.emails_afectados = emails_afectados
 
     def calcular_riesgo(self):
-        return "ALTO" if self.emails_afectados > 100 else "MEDIO"
+        self.riesgo = "ALTO" if self.emails_afectados > 100 else "MEDIO"
+        return self.riesgo
+    
 
     def get_recomendaciones(self):
         return ["Bloquear URL", "Notificar IT"]
@@ -41,7 +38,8 @@ class IncidenciaMalware(Incidencia):
         self.sistemas_afectados = sistemas_afectados
 
     def calcular_riesgo(self):
-        return "CRITICO" if self.sistemas_afectados > 5 else "ALTO"
+        self.riesgo = "CRITICO" if self.sistemas_afectados > 5 else "ALTO"
+        return self.riesgo
 
     def get_recomendaciones(self):
         return ["Aislar equipos", "Escaneo completo"]
@@ -53,7 +51,8 @@ class IncidenciaFuerzaBruta(Incidencia):
         self.ip_origen = ip_origen
 
     def calcular_riesgo(self):
-        return "ALTO" if self.intentos > 500 else "MEDIO"
+        self.riesgo = "ALTO" if self.intentos > 500 else "MEDIO"
+        return self.riesgo
 
     def get_recomendaciones(self):
         return ["Bloquear IP", "Activar 2FA"]
@@ -65,7 +64,8 @@ class IncidenciaFugaDatos(Incidencia):
         self.datos_sensibles = datos_sensibles
 
     def calcular_riesgo(self):
-        return "CRITICO" if self.datos_sensibles else "ALTO"
+        self.riesgo = "CRITICO" if self.datos_sensibles else "ALTO"
+        return self.riesgo
 
     def get_recomendaciones(self):
         return ["Aviso legal", "Cambio de llaves"]
@@ -77,7 +77,9 @@ class IncidenciaAccesoNoAutorizado(Incidencia):
         self.recurso_accedido = recurso_accedido
 
     def calcular_riesgo(self):
-        return "ALTO"
+        self.riesgo = "ALTO"
+        return self.riesgo
 
     def get_recomendaciones(self):
         return ["Revocar permisos", "Auditar logs"]
+    
