@@ -26,7 +26,9 @@ def main():
 
     # Inicializar gestor y cargar datos
     gestor = GestorIncidencias()
-    gestor.cargar_desde_json()  # Cargar desde JSON si existe
+    ruta_json = os.path.join(ruta_raiz, "data", "incidencias.json")
+    if os.path.exists(ruta_json):
+        gestor.cargar_desde_json()
 
     # Sidebar para registro
     st.sidebar.header("Nueva Incidencia")
@@ -87,6 +89,7 @@ def main():
                 
                 gestor.registrar(nueva)
                 gestor.guardar_json()
+                gestor.guardar_csv()
                 st.sidebar.success("Incidencia registrada con éxito")
                 st.rerun()  # Recargar la página
             except (ValidacionException, GestorDatosException) as e:

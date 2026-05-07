@@ -84,7 +84,8 @@ class GestorIncidencias:
         ruta = ruta or self.ruta_csv
         df = self.to_dataframe()
         os.makedirs(os.path.dirname(ruta), exist_ok=True)
-        df.to_csv(ruta, index=False, encoding="utf-8")
+        columnas = ["ID", "Título", "Descripción", "Fecha", "Afectados", "Tipo", "Riesgo", "Recomendación"]
+        df.to_csv(ruta, index=False, encoding="utf-8", columns=columnas, lineterminator="\n")
         return ruta
 
     def guardar_json(self, ruta="data/incidencias.json"):
