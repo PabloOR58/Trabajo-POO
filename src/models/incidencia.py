@@ -16,7 +16,11 @@ class Incidencia(ABC):
     def get_recomendaciones(self):
         pass
 
-
+class grado_incidencia:
+    BAJO = "BAJO"
+    MEDIO = "MEDIO"
+    ALTO = "ALTO"
+    CRITICO = "CRITICO"
 
 class IncidenciaPhishing(Incidencia):
     def __init__(self, id, titulo, desc, fecha, afec, url_maliciosa, emails_afectados):

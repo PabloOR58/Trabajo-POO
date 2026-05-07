@@ -1,46 +1,202 @@
-import pandas as pd
 import os
+import json
+import pandas as pd
+
+from src.models.incidencia import (
+    Incidencia,
+    IncidenciaPhishing,
+    IncidenciaMalware,
+    IncidenciaFuerzaBruta,
+    IncidenciaFugaDatos,
+    IncidenciaAccesoNoAutorizado,
+)
+from src.utils.excepciones import GestorDatosException, ValidacionException
+
 
 class GestorIncidencias:
-    def __init__(self):
-        # Lista donde guardaremos los OBJETOS de las clases (Phishing, Malware, etc.)
+    def __init__(self, ruta_csv="data/incidencias.csv"):
         self.incidencias = []
+        self.ruta_csv = ruta_csv
+        self.cargar_desde_csv()
 
     def registrar(self, incidencia):
-        [span_2](start_span)"""Añade una incidencia a la lista[span_2](end_span)."""
-        self.incidencias.append(incidencia)
+        """Añade una incidencia válida al gestor."""
+        if not isinstance(incidencia, Incidencia):
+            raise GestorDatosException("Solo se pueden registrar objetos de tipo Incidencia")
 
-    def guardar_csv(self, ruta="data/incidencias.csv"):
-        [span_3](start_span)"""Convierte los objetos a una tabla y los guarda en un archivo CSV[span_3](end_span)."""
-        # Creamos una lista de diccionarios con los datos de los objetos
+        if any(item.id == incidencia.id for item in self.incidencias):
+            raise ValidacionException(f"Ya existe una incidencia con ID {incidencia.id}")
+
+        self.incidencias.append(incidencia)
+        return incidencia
+
+    def listar(self):
+        """Devuelve la lista de incidencias registradas."""
+        return list(self.incidencias)
+
+    def buscar_por_id(self, id_incidencia):
+        """Busca una incidencia por su ID."""
+        for inc in self.incidencias:
+            if inc.id == id_incidencia:
+                return inc
+        return None
+
+    def filtrar_por_tipo(self, tipo):
+        """Filtra incidencias por tipo de clase."""
+        return [inc for inc in self.incidencias if type(inc).__name__ == tipo]
+
+    def filtrar_por_riesgo(self, riesgo):
+        """Filtra incidencias por nivel de riesgo."""
+        return [inc for inc in self.incidencias if inc.calcular_riesgo() == riesgo]
+
+    def limpiar_todas(self):
+        """Elimina todas las incidencias del gestor."""
+        self.incidencias = []
+
+    def eliminar_por_id(self, id_incidencia):
+        """Elimina una incidencia por ID."""
+        self.incidencias = [inc for inc in self.incidencias if inc.id != id_incidencia]
+
+    def to_dataframe(self):
+        """Convierte la lista de incidencias a un DataFrame."""
         datos = []
         for inc in self.incidencias:
-            d = {
+            datos.append({
                 "ID": inc.id,
                 "Título": inc.titulo,
                 "Descripción": inc.descripcion,
                 "Fecha": inc.fecha,
                 "Afectados": inc.afectados,
-                "Tipo": type(inc).__name__, # Esto guarda si es Phishing, Malware, etc.
-                [span_4](start_span)"Riesgo": inc.calcular_riesgo(), # Polimorfismo en acción[span_4](end_span)
-                "Recomendación": inc.get_recomendaciones()
-            }
-            datos.append(d)
-        
-        df = pd.DataFrame(datos)
-        # Creamos la carpeta 'data' si no existe
-        os.makedirs(os.path.dirname(ruta), exist_ok=True)
-        df.to_csv(ruta, index=False, encoding='utf-8')
+                "Tipo": type(inc).__name__,
+                "Riesgo": inc.calcular_riesgo(),
+                "Recomendación": ", ".join(inc.get_recomendaciones()),
+            })
+        return pd.DataFrame(datos)
 
-    def cargar_datos(self, ruta="data/incidencias.csv"):
-        [span_5](start_span)"""Lee el CSV y devuelve un DataFrame para que Streamlit lo muestre[span_5](end_span)."""
-        if os.path.exists(ruta):
-            return pd.read_csv(ruta)
-        return pd.DataFrame() # Devuelve tabla vacía si no hay archivo
+    def guardar_csv(self, ruta=None):
+        """Guarda todas las incidencias en un archivo CSV."""
+        ruta = ruta or self.ruta_csv
+        df = self.to_dataframe()
+        os.makedirs(os.path.dirname(ruta), exist_ok=True)
+        df.to_csv(ruta, index=False, encoding="utf-8")
+        return ruta
+
+    def guardar_json(self, ruta="data/incidencias.json"):
+        """Guarda todas las incidencias en un archivo JSON."""
+        datos = []
+        for inc in self.incidencias:
+            datos.append({
+                "id": inc.id,
+                "titulo": inc.titulo,
+                "descripcion": inc.descripcion,
+                "fecha": inc.fecha,
+                "afectados": inc.afectados,
+                "tipo": type(inc).__name__,
+                "riesgo": inc.calcular_riesgo(),
+                "recomendaciones": inc.get_recomendaciones(),
+            })
+
+        os.makedirs(os.path.dirname(ruta), exist_ok=True)
+        with open(ruta, "w", encoding="utf-8") as archivo:
+            json.dump(datos, archivo, ensure_ascii=False, indent=2)
+        return ruta
+
+    def cargar_desde_csv(self, ruta=None):
+        """Carga incidencias desde un archivo CSV y las convierte en objetos."""
+        ruta = ruta or self.ruta_csv
+        self.incidencias = []
+
+        if not os.path.exists(ruta):
+            return []
+
+        df = pd.read_csv(ruta)
+        for _, fila in df.iterrows():
+            incidencia = self._crear_incidencia_desde_fila(fila)
+            if incidencia:
+                self.incidencias.append(incidencia)
+        return self.incidencias
+
+    def cargar_desde_json(self, ruta="data/incidencias.json"):
+        """Carga incidencias desde un archivo JSON y las convierte en objetos."""
+        self.incidencias = []
+
+        if not os.path.exists(ruta):
+            return []
+
+        with open(ruta, "r", encoding="utf-8") as archivo:
+            datos = json.load(archivo)
+
+        for item in datos:
+            incidencia = self._crear_incidencia_desde_dict(item)
+            if incidencia:
+                self.incidencias.append(incidencia)
+        return self.incidencias
+
+    def _crear_incidencia_desde_fila(self, fila):
+        return self._crear_incidencia_desde_dict(fila.to_dict())
+
+    def _crear_incidencia_desde_dict(self, datos):
+        tipo = datos.get("Tipo") or datos.get("tipo")
+        if tipo == "IncidenciaPhishing":
+            return IncidenciaPhishing(
+                int(datos.get("ID", 0)),
+                datos.get("Título") or datos.get("titulo", ""),
+                datos.get("Descripción") or datos.get("descripcion", ""),
+                datos.get("Fecha") or datos.get("fecha", ""),
+                int(datos.get("Afectados", 0)),
+                datos.get("url_maliciosa", ""),
+                int(datos.get("emails_afectados", datos.get("emails_afectados", 0))),
+            )
+        if tipo == "IncidenciaMalware":
+            return IncidenciaMalware(
+                int(datos.get("ID", 0)),
+                datos.get("Título") or datos.get("titulo", ""),
+                datos.get("Descripción") or datos.get("descripcion", ""),
+                datos.get("Fecha") or datos.get("fecha", ""),
+                int(datos.get("Afectados", 0)),
+                datos.get("tipo_malware", ""),
+                int(datos.get("sistemas_afectados", 0)),
+            )
+        if tipo == "IncidenciaFuerzaBruta":
+            return IncidenciaFuerzaBruta(
+                int(datos.get("ID", 0)),
+                datos.get("Título") or datos.get("titulo", ""),
+                datos.get("Descripción") or datos.get("descripcion", ""),
+                datos.get("Fecha") or datos.get("fecha", ""),
+                int(datos.get("Afectados", 0)),
+                int(datos.get("intentos", 0)),
+                datos.get("ip_origen", ""),
+            )
+        if tipo == "IncidenciaFugaDatos":
+            return IncidenciaFugaDatos(
+                int(datos.get("ID", 0)),
+                datos.get("Título") or datos.get("titulo", ""),
+                datos.get("Descripción") or datos.get("descripcion", ""),
+                datos.get("Fecha") or datos.get("fecha", ""),
+                int(datos.get("Afectados", 0)),
+                int(datos.get("registros_expuestos", 0)),
+                bool(datos.get("datos_sensibles", False)),
+            )
+        if tipo == "IncidenciaAccesoNoAutorizado":
+            return IncidenciaAccesoNoAutorizado(
+                int(datos.get("ID", 0)),
+                datos.get("Título") or datos.get("titulo", ""),
+                datos.get("Descripción") or datos.get("descripcion", ""),
+                datos.get("Fecha") or datos.get("fecha", ""),
+                int(datos.get("Afectados", 0)),
+                datos.get("usuario", ""),
+                datos.get("recurso_accedido", ""),
+            )
+        return None
 
     def get_estadisticas(self):
-        [span_6](start_span)"""Calcula cuántas incidencias hay de cada nivel de riesgo[span_6](end_span)."""
-        df = self.cargar_datos()
-        if not df.empty:
-            return df['Riesgo'].value_counts()
-        return None
+        """Calcula estadísticas básicas por riesgo y tipo."""
+        df = self.to_dataframe()
+        if df.empty:
+            return {}
+
+        return {
+            "total": len(df),
+            "por_riesgo": df["Riesgo"].value_counts().to_dict(),
+            "por_tipo": df["Tipo"].value_counts().to_dict(),
+        }
