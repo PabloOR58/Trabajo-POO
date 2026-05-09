@@ -2,6 +2,7 @@ import streamlit as st
 import sys
 import os
 import pandas as pd
+import altair as alt
 
 # Configuración de rutas para Mac
 ruta_raiz = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
@@ -105,7 +106,15 @@ def main():
 
     # Obtener DataFrame
     df = gestor.to_dataframe()
+    tipo_traduccion = {
+        "IncidenciaPhishing": "Phishing",
+        "IncidenciaMalware": "Malware",
+        "IncidenciaFuerzaBruta": "Fuerza Bruta",
+        "IncidenciaFugaDatos": "Fuga de Datos",
+        "IncidenciaAccesoNoAutorizado": "Acceso No Autorizado",
+    }
     if not df.empty:
+        df["Tipo"] = df["Tipo"].map(tipo_traduccion).fillna(df["Tipo"])
         # Aplicar filtros
         if filtro_tipo != "Todos":
             df = df[df["Tipo"] == filtro_tipo]
@@ -126,16 +135,63 @@ def main():
             with col3:
                 st.metric("Riesgos Únicos", len(stats["por_riesgo"]))
             
+            def nombre_tipo(tipo_clase):
+                traducciones = {
+                    "IncidenciaPhishing": "Phishing",
+                    "IncidenciaMalware": "Malware",
+                    "IncidenciaFuerzaBruta": "Fuerza Bruta",
+                    "IncidenciaFugaDatos": "Fuga de Datos",
+                    "IncidenciaAccesoNoAutorizado": "Acceso No Autorizado",
+                }
+                return traducciones.get(tipo_clase, tipo_clase)
+
+            def crear_grafico_barras(df, x, y, titulo, ordenar_por=None, colores=None):
+                chart = alt.Chart(df).mark_bar(cornerRadiusTopLeft=4, cornerRadiusTopRight=4).encode(
+                    x=alt.X(f"{x}:N", sort=ordenar_por, title=None),
+                    y=alt.Y(f"{y}:Q", title="Cantidad"),
+                    color=alt.Color(f"{x}:N", scale=alt.Scale(range=colores), legend=None) if colores else alt.Color(f"{x}:N", legend=None),
+                    tooltip=[alt.Tooltip(f"{x}:N", title=x), alt.Tooltip(f"{y}:Q", title=y)]
+                ).properties(
+                    width="container",
+                    height=320,
+                    title=titulo
+                )
+                return chart
+
             # Gráficos
             st.subheader("Distribución por Riesgo")
             if "por_riesgo" in stats:
                 riesgo_df = pd.DataFrame(list(stats["por_riesgo"].items()), columns=["Riesgo", "Cantidad"])
-                st.bar_chart(riesgo_df.set_index("Riesgo"))
+                st.altair_chart(
+                    crear_grafico_barras(
+                        riesgo_df,
+                        x="Riesgo",
+                        y="Cantidad",
+                        titulo="Incidencias por nivel de riesgo",
+                        ordenar_por=alt.SortField(field="Cantidad", order="descending"),
+                        colores=["#d62728", "#ff7f0e", "#1f77b4"],
+                    ),
+                    use_container_width=True,
+                )
+                st.caption("Número de incidencias agrupadas por nivel de riesgo.")
             
             st.subheader("Distribución por Tipo")
             if "por_tipo" in stats:
-                tipo_df = pd.DataFrame(list(stats["por_tipo"].items()), columns=["Tipo", "Cantidad"])
-                st.bar_chart(tipo_df.set_index("Tipo"))
+                tipo_df = pd.DataFrame([
+                    {"Tipo": nombre_tipo(tipo), "Cantidad": cantidad}
+                    for tipo, cantidad in stats["por_tipo"].items()
+                ])
+                st.altair_chart(
+                    crear_grafico_barras(
+                        tipo_df,
+                        x="Tipo",
+                        y="Cantidad",
+                        titulo="Incidencias por tipo de amenaza",
+                        ordenar_por=alt.SortField(field="Cantidad", order="descending"),
+                    ),
+                    use_container_width=True,
+                )
+                st.caption("Comparación visual de los tipos de amenazas registradas.")
     else:
         st.info("No hay incidencias registradas.")
 
