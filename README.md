@@ -124,3 +124,6 @@ Trabajo-POO/
 - Documentación oficial de Python: https://docs.python.org/3/
 - Streamlit documentation: https://docs.streamlit.io/
 - Pandas documentation: https://pandas.pydata.org/docs/
+
+
+streamlit run src/views/interfaz.py
