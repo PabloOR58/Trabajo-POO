@@ -23,7 +23,7 @@ except ImportError as e:
 
 def main():
     st.set_page_config(page_title="Ciberseguridad UE", layout="wide")
-    st.title("🛡️ Sistema de Análisis de Ciberseguridad")
+    st.title("Sistema de Análisis de Ciberseguridad")
     st.write("Grado en Inteligencia Artificial - Universidad Europea")
 
     # Inicializar gestor y cargar datos

@@ -169,7 +169,7 @@
     ]
   },
   {
-    "id": "sadasd",
+    "id": 0,
     "titulo": "asdasd",
     "descripcion": "asada",
     "fecha": "2026-05-11",
@@ -179,6 +179,19 @@
     "recomendaciones": [
       "Bloquear IP",
       "Activar 2FA"
+    ]
+  },
+  {
+    "id": "123",
+    "titulo": "sic",
+    "descripcion": "sd",
+    "fecha": "2026-05-11",
+    "afectados": 1,
+    "tipo": "IncidenciaFugaDatos",
+    "riesgo": "CRITICO",
+    "recomendaciones": [
+      "Aviso legal",
+      "Cambio de llaves"
     ]
   }
 ]
