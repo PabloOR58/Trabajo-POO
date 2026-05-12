@@ -104,12 +104,12 @@ def main():
                     st.sidebar.success(f"✅ {tipo_seleccionado} registrada!")
                     st.rerun()
             except (ValidacionException, GestorDatosException) as e:
-                st.sidebar.error(f"❌ {e}")
+                st.sidebar.error(f"{e}")
 
     # =========================================================
     # CUERPO PRINCIPAL: VISUALIZACIÓN
     # =========================================================
-    st.header("📊 Historial de Amenazas")
+    st.header("Historial de Amenazas")
     
     df = gestor.to_dataframe()
     
@@ -152,8 +152,11 @@ def main():
             # Función para gráficos consistentes
             def crear_chart(data, x_field, y_field, titulo, color_range=None):
                 base = alt.Chart(data).mark_bar(cornerRadiusTopLeft=8, cornerRadiusTopRight=8).encode(
+                    #N significa que es texto
                     x=alt.X(f"{x_field}:N", title=None, sort='-y'),
+                    # sort = -y ordena de mayor a menor las categorías en el eje x según la cantidad (y)
                     y=alt.Y(f"{y_field}:Q", title="Cantidad"),
+                    #Color dependiente del tipo o riesgo, con rango personalizado si se da, o colores por defecto si no
                     color=alt.Color(f"{x_field}:N", scale=alt.Scale(range=color_range) if color_range else alt.Undefined, legend=None),
                     tooltip=[x_field, y_field]
                 ).properties(height=300, title=titulo)
@@ -168,6 +171,7 @@ def main():
 
             with col_g2:
                 if "por_tipo" in stats:
+                     #Si existe traudccion de riesgo, la aplica, sino deja el riesgo original
                     t_data = [{"Tipo": tipo_traduccion.get(k, k), "Cant": v} for k, v in stats["por_tipo"].items()]
                     t_df = pd.DataFrame(t_data)
                     st.altair_chart(crear_chart(t_df, "Tipo", "Cant", "Distribución por Tipo"), use_container_width=True)

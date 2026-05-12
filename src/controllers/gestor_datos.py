@@ -146,24 +146,34 @@ class GestorIncidencias:
         return self._crear_incidencia_desde_dict(fila.to_dict())
 
     def _crear_incidencia_desde_dict(self, datos):
+        # Convierte un valor a string de forma segura
         def safe_str(value, default=""):
+            # Si el valor es NaN (vacío en pandas), devuelve valor por defecto
             if pd.isna(value):
                 return default
             return str(value).strip()
-
+        # Convierte un valor a entero de forma segura
+        
         def safe_int(value, default=0):
+        # Convierte un valor a entero de forma segura  
             if pd.isna(value) or value == "":
+                # Si está vacío o es NaN, devuelve el valor por defec
                 return default
             try:
                 return int(value)
+                # Intenta convertir a entero
             except (ValueError, TypeError):
+                # Si falla la conversión, devuelve el valor por defecto
                 return default
-
+        # Busca una clave dentro del diccionario (acepta varias opciones)
         def get_pair(*keys, default=""):
             for key in keys:
+                # Recorre todas las posibles claves
                 if key in datos and datos[key] is not None:
+                    # Si la clave existe y no es None, la devuelve
                     return datos[key]
             return default
+            # Si no encuentra ninguna clave válida, devuelve el valor por defecto
 
         tipo = safe_str(get_pair("Tipo", "tipo", default=""))
         if tipo == "IncidenciaPhishing":
