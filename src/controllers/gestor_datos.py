@@ -1,6 +1,12 @@
 import os
+import sys
 import json
 import pandas as pd
+
+# Ajuste para ejecutar este módulo como script desde cualquier carpeta.
+ruta_raiz = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+if ruta_raiz not in sys.path:
+    sys.path.insert(0, ruta_raiz)
 
 from src.models.incidencia import (
     Incidencia,
@@ -78,7 +84,8 @@ class GestorIncidencias:
         ruta = ruta or self.ruta_csv
         df = self.to_dataframe()
         os.makedirs(os.path.dirname(ruta), exist_ok=True)
-        df.to_csv(ruta, index=False, encoding="utf-8")
+        columnas = ["ID", "Título", "Descripción", "Fecha", "Afectados", "Tipo", "Riesgo", "Recomendación"]
+        df.to_csv(ruta, index=False, encoding="utf-8", columns=columnas, lineterminator="\n")
         return ruta
 
     def guardar_json(self, ruta="data/incidencias.json"):
@@ -124,7 +131,10 @@ class GestorIncidencias:
             return []
 
         with open(ruta, "r", encoding="utf-8") as archivo:
-            datos = json.load(archivo)
+            try:
+                datos = json.load(archivo)
+            except json.JSONDecodeError:
+                return []  # Si el JSON está vacío o inválido, devolver lista vacía
 
         for item in datos:
             incidencia = self._crear_incidencia_desde_dict(item)
@@ -136,56 +146,75 @@ class GestorIncidencias:
         return self._crear_incidencia_desde_dict(fila.to_dict())
 
     def _crear_incidencia_desde_dict(self, datos):
-        tipo = datos.get("Tipo") or datos.get("tipo")
+        def safe_str(value, default=""):
+            if pd.isna(value):
+                return default
+            return str(value).strip()
+
+        def safe_int(value, default=0):
+            if pd.isna(value) or value == "":
+                return default
+            try:
+                return int(value)
+            except (ValueError, TypeError):
+                return default
+
+        def get_pair(*keys, default=""):
+            for key in keys:
+                if key in datos and datos[key] is not None:
+                    return datos[key]
+            return default
+
+        tipo = safe_str(get_pair("Tipo", "tipo", default=""))
         if tipo == "IncidenciaPhishing":
             return IncidenciaPhishing(
-                int(datos.get("ID", 0)),
-                datos.get("Título") or datos.get("titulo", ""),
-                datos.get("Descripción") or datos.get("descripcion", ""),
-                datos.get("Fecha") or datos.get("fecha", ""),
-                int(datos.get("Afectados", 0)),
-                datos.get("url_maliciosa", ""),
-                int(datos.get("emails_afectados", datos.get("emails_afectados", 0))),
+                safe_int(get_pair("ID", "id", default=0)),
+                safe_str(get_pair("Título", "titulo", default="")),
+                safe_str(get_pair("Descripción", "descripcion", default="")),
+                safe_str(get_pair("Fecha", "fecha", default="")),
+                safe_int(get_pair("Afectados", "afectados", default=0)),
+                safe_str(get_pair("url_maliciosa", "url_maliciosa", default="")),
+                safe_int(get_pair("emails_afectados", "emails_afectados", default=0)),
             )
         if tipo == "IncidenciaMalware":
             return IncidenciaMalware(
-                int(datos.get("ID", 0)),
-                datos.get("Título") or datos.get("titulo", ""),
-                datos.get("Descripción") or datos.get("descripcion", ""),
-                datos.get("Fecha") or datos.get("fecha", ""),
-                int(datos.get("Afectados", 0)),
-                datos.get("tipo_malware", ""),
-                int(datos.get("sistemas_afectados", 0)),
+                safe_int(get_pair("ID", "id", default=0)),
+                safe_str(get_pair("Título", "titulo", default="")),
+                safe_str(get_pair("Descripción", "descripcion", default="")),
+                safe_str(get_pair("Fecha", "fecha", default="")),
+                safe_int(get_pair("Afectados", "afectados", default=0)),
+                safe_str(get_pair("tipo_malware", "tipo_malware", default="")),
+                safe_int(get_pair("sistemas_afectados", "sistemas_afectados", default=0)),
             )
         if tipo == "IncidenciaFuerzaBruta":
             return IncidenciaFuerzaBruta(
-                int(datos.get("ID", 0)),
-                datos.get("Título") or datos.get("titulo", ""),
-                datos.get("Descripción") or datos.get("descripcion", ""),
-                datos.get("Fecha") or datos.get("fecha", ""),
-                int(datos.get("Afectados", 0)),
-                int(datos.get("intentos", 0)),
-                datos.get("ip_origen", ""),
+                safe_int(get_pair("ID", "id", default=0)),
+                safe_str(get_pair("Título", "titulo", default="")),
+                safe_str(get_pair("Descripción", "descripcion", default="")),
+                safe_str(get_pair("Fecha", "fecha", default="")),
+                safe_int(get_pair("Afectados", "afectados", default=0)),
+                safe_int(get_pair("intentos", "intentos", default=0)),
+                safe_str(get_pair("ip_origen", "ip_origen", default="")),
             )
         if tipo == "IncidenciaFugaDatos":
             return IncidenciaFugaDatos(
-                int(datos.get("ID", 0)),
-                datos.get("Título") or datos.get("titulo", ""),
-                datos.get("Descripción") or datos.get("descripcion", ""),
-                datos.get("Fecha") or datos.get("fecha", ""),
-                int(datos.get("Afectados", 0)),
-                int(datos.get("registros_expuestos", 0)),
-                bool(datos.get("datos_sensibles", False)),
+                safe_int(get_pair("ID", "id", default=0)),
+                safe_str(get_pair("Título", "titulo", default="")),
+                safe_str(get_pair("Descripción", "descripcion", default="")),
+                safe_str(get_pair("Fecha", "fecha", default="")),
+                safe_int(get_pair("Afectados", "afectados", default=0)),
+                safe_int(get_pair("registros_expuestos", "registros_expuestos", default=0)),
+                bool(get_pair("datos_sensibles", "datos_sensibles", default=False)),
             )
         if tipo == "IncidenciaAccesoNoAutorizado":
             return IncidenciaAccesoNoAutorizado(
-                int(datos.get("ID", 0)),
-                datos.get("Título") or datos.get("titulo", ""),
-                datos.get("Descripción") or datos.get("descripcion", ""),
-                datos.get("Fecha") or datos.get("fecha", ""),
-                int(datos.get("Afectados", 0)),
-                datos.get("usuario", ""),
-                datos.get("recurso_accedido", ""),
+                safe_int(get_pair("ID", "id", default=0)),
+                safe_str(get_pair("Título", "titulo", default="")),
+                safe_str(get_pair("Descripción", "descripcion", default="")),
+                safe_str(get_pair("Fecha", "fecha", default="")),
+                safe_int(get_pair("Afectados", "afectados", default=0)),
+                safe_str(get_pair("usuario", "usuario", default="")),
+                safe_str(get_pair("recurso_accedido", "recurso_accedido", default="")),
             )
         return None
 

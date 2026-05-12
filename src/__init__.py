@@ -1,1 +1,0 @@
-"""Paquete raíz del proyecto."""

@@ -1,0 +1,197 @@
+[
+  {
+    "id": 0,
+    "titulo": "MAlo",
+    "descripcion": "google.es",
+    "fecha": "2026-05-07",
+    "afectados": 0,
+    "tipo": "IncidenciaMalware",
+    "riesgo": "ALTO",
+    "recomendaciones": [
+      "Aislar equipos",
+      "Escaneo completo"
+    ]
+  },
+  {
+    "id": 0,
+    "titulo": "MAlo",
+    "descripcion": "google.es",
+    "fecha": "2026-05-07",
+    "afectados": 0,
+    "tipo": "IncidenciaMalware",
+    "riesgo": "ALTO",
+    "recomendaciones": [
+      "Aislar equipos",
+      "Escaneo completo"
+    ]
+  },
+  {
+    "id": 0,
+    "titulo": "MAlo",
+    "descripcion": "google.es",
+    "fecha": "2026-05-07",
+    "afectados": 0,
+    "tipo": "IncidenciaMalware",
+    "riesgo": "ALTO",
+    "recomendaciones": [
+      "Aislar equipos",
+      "Escaneo completo"
+    ]
+  },
+  {
+    "id": 0,
+    "titulo": "MAlo",
+    "descripcion": "google.es",
+    "fecha": "2026-05-07",
+    "afectados": 0,
+    "tipo": "IncidenciaMalware",
+    "riesgo": "ALTO",
+    "recomendaciones": [
+      "Aislar equipos",
+      "Escaneo completo"
+    ]
+  },
+  {
+    "id": 0,
+    "titulo": "MAlo",
+    "descripcion": "google.es",
+    "fecha": "2026-05-07",
+    "afectados": 0,
+    "tipo": "IncidenciaMalware",
+    "riesgo": "ALTO",
+    "recomendaciones": [
+      "Aislar equipos",
+      "Escaneo completo"
+    ]
+  },
+  {
+    "id": 0,
+    "titulo": "MAlo",
+    "descripcion": "google.es",
+    "fecha": "2026-05-07",
+    "afectados": 0,
+    "tipo": "IncidenciaMalware",
+    "riesgo": "ALTO",
+    "recomendaciones": [
+      "Aislar equipos",
+      "Escaneo completo"
+    ]
+  },
+  {
+    "id": 0,
+    "titulo": "MAlo",
+    "descripcion": "google.es",
+    "fecha": "2026-05-07",
+    "afectados": 0,
+    "tipo": "IncidenciaMalware",
+    "riesgo": "ALTO",
+    "recomendaciones": [
+      "Aislar equipos",
+      "Escaneo completo"
+    ]
+  },
+  {
+    "id": 0,
+    "titulo": "MAlo",
+    "descripcion": "google.es",
+    "fecha": "2026-05-07",
+    "afectados": 0,
+    "tipo": "IncidenciaMalware",
+    "riesgo": "ALTO",
+    "recomendaciones": [
+      "Aislar equipos",
+      "Escaneo completo"
+    ]
+  },
+  {
+    "id": 0,
+    "titulo": "MAlo",
+    "descripcion": "google.es",
+    "fecha": "2026-05-07",
+    "afectados": 0,
+    "tipo": "IncidenciaMalware",
+    "riesgo": "ALTO",
+    "recomendaciones": [
+      "Aislar equipos",
+      "Escaneo completo"
+    ]
+  },
+  {
+    "id": 0,
+    "titulo": "MAlo",
+    "descripcion": "google.es",
+    "fecha": "2026-05-07",
+    "afectados": 0,
+    "tipo": "IncidenciaMalware",
+    "riesgo": "ALTO",
+    "recomendaciones": [
+      "Aislar equipos",
+      "Escaneo completo"
+    ]
+  },
+  {
+    "id": 0,
+    "titulo": "MAlo",
+    "descripcion": "google.es",
+    "fecha": "2026-05-07",
+    "afectados": 0,
+    "tipo": "IncidenciaMalware",
+    "riesgo": "ALTO",
+    "recomendaciones": [
+      "Aislar equipos",
+      "Escaneo completo"
+    ]
+  },
+  {
+    "id": 123,
+    "titulo": "fdsfa",
+    "descripcion": "dfdf",
+    "fecha": "2026-05-07",
+    "afectados": 2,
+    "tipo": "IncidenciaPhishing",
+    "riesgo": "MEDIO",
+    "recomendaciones": [
+      "Bloquear URL",
+      "Notificar IT"
+    ]
+  },
+  {
+    "id": 123,
+    "titulo": "asda",
+    "descripcion": "asdas",
+    "fecha": "2026-05-07",
+    "afectados": 2,
+    "tipo": "IncidenciaFugaDatos",
+    "riesgo": "ALTO",
+    "recomendaciones": [
+      "Aviso legal",
+      "Cambio de llaves"
+    ]
+  },
+  {
+    "id": 0,
+    "titulo": "asdasd",
+    "descripcion": "asada",
+    "fecha": "2026-05-11",
+    "afectados": 1,
+    "tipo": "IncidenciaFuerzaBruta",
+    "riesgo": "MEDIO",
+    "recomendaciones": [
+      "Bloquear IP",
+      "Activar 2FA"
+    ]
+  },
+  {
+    "id": "123",
+    "titulo": "sic",
+    "descripcion": "sd",
+    "fecha": "2026-05-11",
+    "afectados": 1,
+    "tipo": "IncidenciaFugaDatos",
+    "riesgo": "CRITICO",
+    "recomendaciones": [
+      "Aviso legal",
+      "Cambio de llaves"
+    ]
+  }
+]
