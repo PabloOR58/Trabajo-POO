@@ -1,13 +1,15 @@
+#Sirve para que cuando. en la web se regsitre un Phising, el programa sepa qué datos necesita
+
 import os
-import sys
-from abc import ABC, abstractmethod
-
+import sys #Permite que el programa encuentre las otras carpetas del proyecto
+from abc import ABC, abstractmethod #Importamos ABC y abstractmethod para crear una clase base abstracta que defina la estructura común de las incidencias, asegurando que todas las clases de incidencia implementen los métodos necesarios como calcular_riesgo y get_recomendaciones.
+#La clae abstracta sirve para definir qué deben tener en común todas sus hijas.
 # Ajuste para ejecutar este módulo como script desde cualquier carpeta.
-ruta_raiz = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+ruta_raiz = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')) #Calcula la ruta raíz del proyecto subiendo dos niveles desde la ubicación actual del archivo. Esto es útil para asegurarse de que el programa pueda encontrar las otras carpetas del proyecto sin importar desde dónde se ejecute el script.
 if ruta_raiz not in sys.path:
-    sys.path.insert(0, ruta_raiz)
+    sys.path.insert(0, ruta_raiz) #Agrega la ruta raíz al inicio de sys.path para que Python pueda encontrar los módulos del proyecto. Esto es especialmente importante para evitar problemas de importación cuando se ejecuta el script desde diferentes ubicaciones.
 
-from src.utils.excepciones import ValidacionException
+from src.utils.excepciones import ValidacionException #Importamos la clase ValidacionException para manejar errores de validación de datos en las clases de incidencia. Esto nos permite lanzar excepciones específicas cuando los datos proporcionados para crear una incidencia no cumplen con los requisitos esperados, mejorando la robustez y la capacidad de manejo de errores del programa.
 
 
 class Incidencia(ABC):
@@ -45,14 +47,14 @@ class Incidencia(ABC):
         if not isinstance(afectados, int) or afectados < 0:
             raise ValidacionException("Afectados debe ser un entero no negativo")
         # Convertir ID a str si es int
-        if isinstance(id, int):
+        if isinstance(id, int): #Si el ID es un entero, lo convertimos a cadena para mantener la consistencia en el tipo de dato del ID en todas las incidencias. Esto permite que el programa maneje los IDs de manera uniforme, independientemente de si se proporcionan como enteros o cadenas, evitando posibles problemas de tipo al trabajar con los IDs en otras partes del programa.
             id = str(id)
         self.id = id
 
-    @abstractmethod
+    @abstractmethod #Este método abstracto obliga a las clases hijas a implementar su propia lógica para calcular el nivel de riesgo de la incidencia, lo que permite que cada tipo de incidencia tenga su propio criterio de evaluación de riesgo basado en sus características específicas.
     def calcular_riesgo(self):
         """Calcula y retorna el nivel de riesgo de la incidencia."""
-        pass
+        pass #
 
     @abstractmethod
     def get_recomendaciones(self):
@@ -77,14 +79,14 @@ class IncidenciaPhishing(Incidencia):
 
     def validar_phishing(self, url, emails):
         """Valida parámetros específicos de phishing."""
-        if not isinstance(url, str):
+        if not isinstance(url, str): #Si la URL maliciosa no es una cadena, se lanza una excepción de validación indicando que debe ser una cadena. Esto asegura que el programa maneje correctamente los datos de la URL y evita errores posteriores al intentar procesar o utilizar la URL en otras partes del programa.
             raise ValidacionException("URL maliciosa debe ser una cadena")
         if not isinstance(emails, int) or emails < 0:
             raise ValidacionException("Emails afectados debe ser un entero no negativo")
 
     def calcular_riesgo(self):
         """Calcula riesgo: ALTO si >100 emails, MEDIO en caso contrario."""
-        self.riesgo = "ALTO" if self.emails_afectados > 100 else "MEDIO"
+        self.riesgo = "ALTO" if self.emails_afectados > 100 else "MEDIO" #Si el número de emails afectados es mayor a 100, se considera que el riesgo es ALTO, de lo contrario, se considera MEDIO. Esta lógica permite evaluar el nivel de riesgo de una incidencia de phishing en función de la cantidad de personas afectadas, lo que es un criterio común para determinar la gravedad de este tipo de ataques.
         return self.riesgo
     
 
