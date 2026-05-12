@@ -182,16 +182,29 @@
     ]
   },
   {
-    "id": "123",
+    "id": 123,
     "titulo": "sic",
     "descripcion": "sd",
     "fecha": "2026-05-11",
     "afectados": 1,
     "tipo": "IncidenciaFugaDatos",
-    "riesgo": "CRITICO",
+    "riesgo": "ALTO",
     "recomendaciones": [
       "Aviso legal",
       "Cambio de llaves"
+    ]
+  },
+  {
+    "id": "prueba",
+    "titulo": "uuu",
+    "descripcion": "uuu",
+    "fecha": "2026-05-12",
+    "afectados": 60,
+    "tipo": "IncidenciaMalware",
+    "riesgo": "ALTO",
+    "recomendaciones": [
+      "Aislar equipos",
+      "Escaneo completo"
     ]
   }
 ]
