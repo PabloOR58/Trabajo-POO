@@ -182,16 +182,42 @@
     ]
   },
   {
-    "id": "123",
+    "id": 123,
     "titulo": "sic",
     "descripcion": "sd",
     "fecha": "2026-05-11",
     "afectados": 1,
     "tipo": "IncidenciaFugaDatos",
-    "riesgo": "CRITICO",
+    "riesgo": "ALTO",
     "recomendaciones": [
       "Aviso legal",
       "Cambio de llaves"
+    ]
+  },
+  {
+    "id": 0,
+    "titulo": "qwe",
+    "descripcion": "asdas",
+    "fecha": "2026-05-13",
+    "afectados": 1,
+    "tipo": "IncidenciaPhishing",
+    "riesgo": "MEDIO",
+    "recomendaciones": [
+      "Bloquear URL",
+      "Notificar IT"
+    ]
+  },
+  {
+    "id": "123",
+    "titulo": "hila",
+    "descripcion": "asdasd",
+    "fecha": "2030-05-16",
+    "afectados": 1,
+    "tipo": "IncidenciaPhishing",
+    "riesgo": "MEDIO",
+    "recomendaciones": [
+      "Bloquear URL",
+      "Notificar IT"
     ]
   }
 ]

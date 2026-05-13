@@ -11,17 +11,6 @@ from src.utils.excepciones import ValidacionException
 
 
 class Incidencia(ABC):
-    """Clase abstracta base para todas las incidencias de ciberseguridad.
-
-    Atributos:
-        id (str): Identificador único de la incidencia.
-        titulo (str): Título descriptivo.
-        descripcion (str): Descripción detallada.
-        fecha (str): Fecha de la incidencia (formato YYYY-MM-DD).
-        afectados (int): Número de afectados.
-        riesgo (str): Nivel de riesgo calculado.
-    """
-
     def __init__(self, id, titulo, descripcion, fecha, afectados):
         """Inicializa una incidencia con validación de datos."""
         self.validar_datos(id, titulo, descripcion, fecha, afectados)
@@ -61,13 +50,7 @@ class Incidencia(ABC):
 
 
 class IncidenciaPhishing(Incidencia):
-    """Incidencia de phishing: ataques que intentan robar credenciales mediante engaño.
-
-    Atributos adicionales:
-        url_maliciosa (str): URL del sitio falso.
-        emails_afectados (int): Número de emails enviados o afectados.
-    """
-
+ 
     def __init__(self, id, titulo, desc, fecha, afec, url_maliciosa, emails_afectados):
         """Inicializa una incidencia de phishing con validación específica."""
         super().__init__(id, titulo, desc, fecha, afec)
@@ -94,13 +77,7 @@ class IncidenciaPhishing(Incidencia):
 
 
 class IncidenciaMalware(Incidencia):
-    """Incidencia de malware: infección por software malicioso.
-
-    Atributos adicionales:
-        tipo_malware (str): Tipo de malware (ej. virus, trojan).
-        sistemas_afectados (int): Número de sistemas infectados.
-    """
-
+    
     def __init__(self, id, titulo, desc, fecha, afec, tipo_malware, sistemas_afectados):
         """Inicializa una incidencia de malware con validación específica."""
         super().__init__(id, titulo, desc, fecha, afec)
@@ -126,13 +103,6 @@ class IncidenciaMalware(Incidencia):
 
 
 class IncidenciaFuerzaBruta(Incidencia):
-    """Incidencia de fuerza bruta: intentos repetidos de acceso no autorizado.
-
-    Atributos adicionales:
-        intentos (int): Número de intentos realizados.
-        ip_origen (str): Dirección IP del atacante.
-    """
-
     def __init__(self, id, titulo, desc, fecha, afec, intentos, ip_origen):
         """Inicializa una incidencia de fuerza bruta con validación específica."""
         super().__init__(id, titulo, desc, fecha, afec)
@@ -158,12 +128,6 @@ class IncidenciaFuerzaBruta(Incidencia):
 
 
 class IncidenciaFugaDatos(Incidencia):
-    """Incidencia de fuga de datos: exposición no autorizada de información.
-
-    Atributos adicionales:
-        registros_expuestos (int): Número de registros afectados.
-        datos_sensibles (bool): Si los datos incluyen información sensible.
-    """
 
     def __init__(self, id, titulo, desc, fecha, afec, registros_expuestos, datos_sensibles):
         """Inicializa una incidencia de fuga de datos con validación específica."""
@@ -190,13 +154,6 @@ class IncidenciaFugaDatos(Incidencia):
 
 
 class IncidenciaAccesoNoAutorizado(Incidencia):
-    """Incidencia de acceso no autorizado: entrada a sistemas sin permiso.
-
-    Atributos adicionales:
-        usuario (str): Usuario que realizó el acceso.
-        recurso_accedido (str): Recurso o sistema accedido.
-    """
-
     def __init__(self, id, titulo, desc, fecha, afec, usuario, recurso_accedido):
         """Inicializa una incidencia de acceso no autorizado con validación específica."""
         super().__init__(id, titulo, desc, fecha, afec)

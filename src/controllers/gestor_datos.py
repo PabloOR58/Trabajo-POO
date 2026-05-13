@@ -238,4 +238,5 @@ class GestorIncidencias:
             "total": len(df),
             "por_riesgo": df["Riesgo"].value_counts().to_dict(),
             "por_tipo": df["Tipo"].value_counts().to_dict(),
+            
         }

@@ -127,3 +127,4 @@ Trabajo-POO/
 
 
 streamlit run src/views/interfaz.py
+ una grafica que a la derecha, una linea mas a la tabla. columnna y boton nuevo en datos, una cajita en malware
