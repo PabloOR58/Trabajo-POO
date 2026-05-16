@@ -51,6 +51,7 @@ def main():
         fecha_dt = st.date_input("Fecha de detección")
         afectados = st.number_input("Nº de afectados", min_value=0, step=1)
         
+        
         st.markdown("---")
         st.subheader(f"Detalles de {tipo_seleccionado}")
 
@@ -58,21 +59,25 @@ def main():
         if tipo_seleccionado == "Phishing":
             url_maliciosa = st.text_input("URL Maliciosa")
             emails_afectados = st.number_input("Emails Afectados", min_value=0, step=1)
+            recurso_accedido = st.text_input("Recurso accedido")
         elif tipo_seleccionado == "Malware":
             tipo_malware = st.text_input("Tipo de Malware (ej. Ransomware)")
             sistemas_afectados = st.number_input("Sistemas Afectados", min_value=0, step=1)
+            recurso_accedido = st.text_input("Recurso accedido")
         elif tipo_seleccionado == "Fuerza Bruta":
             intentos = st.number_input("Nº de Intentos", min_value=0, step=1)
             ip_origen = st.text_input("IP de Origen")
+            recurso_accedido = st.text_input("Recurso accedido")
         elif tipo_seleccionado == "Fuga de Datos":
             registros_expuestos = st.number_input("Registros Expuestos", min_value=0, step=1)
             datos_sensibles = st.checkbox("¿Incluye Datos Sensibles?")
+            recurso_accedido = st.text_input("Recurso accedido")
+
         elif tipo_seleccionado == "Acceso No Autorizado":
             usuario = st.text_input("Usuario implicado")
             recurso_accedido = st.text_input("Recurso accedido")
-            cajita_extra = st.text_input("Información extra adicional")
         submit = st.form_submit_button("Registrar Incidencia")
-
+        
         if submit:
             try:
                 # Validaciones básicas comunes
@@ -141,8 +146,6 @@ def main():
             df = df[df["Tipo"] == filtro_tipo]
         if filtro_riesgo != "Todos":
             df = df[df["Riesgo"] == filtro_riesgo]
-        if df.empty:
-            st.warning("No hay incidencias que coincidan con los filtros seleccionados.")
         
         st.dataframe(df, use_container_width=True)
         
@@ -151,11 +154,10 @@ def main():
         stats = gestor.get_estadisticas()
         
         if stats and stats["total"] > 0:
-            c1, c2, c3, c4= st.columns(4)
+            c1, c2, c3 = st.columns(3)
             c1.metric("Total Incidencias", stats["total"])
             c2.metric("Nº de Tipos", len(stats["por_tipo"]))
             c3.metric("Nº de Riesgos", len(stats["por_riesgo"]))
-            c4.metric("Nueva_Inidencia",len(df))
 
             # Función para gráficos consistentes
             def crear_chart(data, x_field, y_field, titulo, color_range=None):
@@ -170,7 +172,7 @@ def main():
                 ).properties(height=300, title=titulo)
                 return base
 
-            col_g1, col_g2, col_g3 = st.columns(3)
+            col_g1, col_g2 = st.columns(2)
             
             with col_g1:
                 if "por_riesgo" in stats:
@@ -184,24 +186,18 @@ def main():
                     t_df = pd.DataFrame(t_data)
                     st.altair_chart(crear_chart(t_df, "Tipo", "Cant", "Distribución por Tipo"), use_container_width=True)
             
-            with col_g3:
-                if "por_tipo" in stats:
-                    t_data = pd.DataFrame(list(stats["por_tipo"].items()), columns=["Tipo", "Cant"])
-                    t_df = pd.DataFrame(t_data)
-                    st.altair_chart(crear_chart(t_df, "Tipo", "Cant", "Distribución por Tipo"), use_container_width=True)
-    
     else:
         st.info("No hay incidencias registradas aún. Use el panel lateral para añadir la primera.")
 
     # Acciones extra en Sidebar
     
-    st.sidebar.markdown("---")
-    st.sidebar.header("📂 Datos")
-    if st.sidebar.button("⬇️ Exportar CSV"):
+    st.sidebar.markdown("---")        
+    st.sidebar.header("Datos")
+    if st.sidebar.button("Exportar CSV"):
         gestor.guardar_csv()
         st.sidebar.success("CSV Actualizado")
     
-    if st.sidebar.button("🔄 Recargar Datos"):
+    if st.sidebar.button("Recargar Datos"):
         gestor.cargar_desde_json()
         st.rerun()
 

@@ -12,7 +12,6 @@ from src.utils.excepciones import ValidacionException
 
 class Incidencia(ABC):
     def __init__(self, id, titulo, descripcion, fecha, afectados):
-        """Inicializa una incidencia con validación de datos."""
         self.validar_datos(id, titulo, descripcion, fecha, afectados)
         self.id = id
         self.titulo = titulo
@@ -40,141 +39,119 @@ class Incidencia(ABC):
 
     @abstractmethod
     def calcular_riesgo(self):
-        """Calcula y retorna el nivel de riesgo de la incidencia."""
         pass
 
     @abstractmethod
     def get_recomendaciones(self):
-        """Retorna una lista de recomendaciones para mitigar la incidencia."""
         pass
 
 
 class IncidenciaPhishing(Incidencia):
  
     def __init__(self, id, titulo, desc, fecha, afec, url_maliciosa, emails_afectados):
-        """Inicializa una incidencia de phishing con validación específica."""
         super().__init__(id, titulo, desc, fecha, afec)
         self.validar_phishing(url_maliciosa, emails_afectados)
         self.url_maliciosa = url_maliciosa
         self.emails_afectados = emails_afectados
 
     def validar_phishing(self, url, emails):
-        """Valida parámetros específicos de phishing."""
         if not isinstance(url, str):
             raise ValidacionException("URL maliciosa debe ser una cadena")
         if not isinstance(emails, int) or emails < 0:
             raise ValidacionException("Emails afectados debe ser un entero no negativo")
 
     def calcular_riesgo(self):
-        """Calcula riesgo: ALTO si >100 emails, MEDIO en caso contrario."""
         self.riesgo = "ALTO" if self.emails_afectados > 100 else "MEDIO"
         return self.riesgo
     
 
     def get_recomendaciones(self):
-        """Retorna recomendaciones estándar para phishing."""
         return ["Bloquear URL", "Notificar IT"]
 
 
 class IncidenciaMalware(Incidencia):
     
     def __init__(self, id, titulo, desc, fecha, afec, tipo_malware, sistemas_afectados):
-        """Inicializa una incidencia de malware con validación específica."""
         super().__init__(id, titulo, desc, fecha, afec)
         self.validar_malware(tipo_malware, sistemas_afectados)
         self.tipo_malware = tipo_malware
         self.sistemas_afectados = sistemas_afectados
 
     def validar_malware(self, tipo, sistemas):
-        """Valida parámetros específicos de malware."""
         if not isinstance(tipo, str):
             raise ValidacionException("Tipo de malware debe ser una cadena")
         if not isinstance(sistemas, int) or sistemas < 0:
             raise ValidacionException("Sistemas afectados debe ser un entero no negativo")
 
     def calcular_riesgo(self):
-        """Calcula riesgo: CRITICO si >5 sistemas, ALTO en caso contrario."""
         self.riesgo = "CRITICO" if self.sistemas_afectados > 5 else "ALTO"
         return self.riesgo
 
     def get_recomendaciones(self):
-        """Retorna recomendaciones estándar para malware."""
         return ["Aislar equipos", "Escaneo completo"]
 
 
 class IncidenciaFuerzaBruta(Incidencia):
     def __init__(self, id, titulo, desc, fecha, afec, intentos, ip_origen):
-        """Inicializa una incidencia de fuerza bruta con validación específica."""
         super().__init__(id, titulo, desc, fecha, afec)
         self.validar_fuerza_bruta(intentos, ip_origen)
         self.intentos = intentos
         self.ip_origen = ip_origen
 
     def validar_fuerza_bruta(self, intentos, ip):
-        """Valida parámetros específicos de fuerza bruta."""
         if not isinstance(intentos, int) or intentos < 0:
             raise ValidacionException("Intentos debe ser un entero no negativo")
         if not isinstance(ip, str):
             raise ValidacionException("IP origen debe ser una cadena")
 
     def calcular_riesgo(self):
-        """Calcula riesgo: ALTO si >500 intentos, MEDIO en caso contrario."""
         self.riesgo = "ALTO" if self.intentos > 500 else "MEDIO"
         return self.riesgo
 
     def get_recomendaciones(self):
-        """Retorna recomendaciones estándar para fuerza bruta."""
         return ["Bloquear IP", "Activar 2FA"]
 
 
 class IncidenciaFugaDatos(Incidencia):
 
     def __init__(self, id, titulo, desc, fecha, afec, registros_expuestos, datos_sensibles):
-        """Inicializa una incidencia de fuga de datos con validación específica."""
         super().__init__(id, titulo, desc, fecha, afec)
         self.validar_fuga_datos(registros_expuestos, datos_sensibles)
         self.registros_expuestos = registros_expuestos
         self.datos_sensibles = datos_sensibles
 
     def validar_fuga_datos(self, registros, sensibles):
-        """Valida parámetros específicos de fuga de datos."""
         if not isinstance(registros, int) or registros < 0:
             raise ValidacionException("Registros expuestos debe ser un entero no negativo")
         if not isinstance(sensibles, bool):
             raise ValidacionException("Datos sensibles debe ser un booleano")
 
     def calcular_riesgo(self):
-        """Calcula riesgo: CRITICO si datos sensibles, ALTO en caso contrario."""
         self.riesgo = "CRITICO" if self.datos_sensibles else "ALTO"
         return self.riesgo
 
     def get_recomendaciones(self):
-        """Retorna recomendaciones estándar para fuga de datos."""
         return ["Aviso legal", "Cambio de llaves"]
 
 
 class IncidenciaAccesoNoAutorizado(Incidencia):
     def __init__(self, id, titulo, desc, fecha, afec, usuario, recurso_accedido):
-        """Inicializa una incidencia de acceso no autorizado con validación específica."""
         super().__init__(id, titulo, desc, fecha, afec)
         self.validar_acceso_no_autorizado(usuario, recurso_accedido)
         self.usuario = usuario
         self.recurso_accedido = recurso_accedido
 
     def validar_acceso_no_autorizado(self, usuario, recurso):
-        """Valida parámetros específicos de acceso no autorizado."""
         if not isinstance(usuario, str):
             raise ValidacionException("Usuario debe ser una cadena")
         if not isinstance(recurso, str):
             raise ValidacionException("Recurso accedido debe ser una cadena")
 
     def calcular_riesgo(self):
-        """Calcula riesgo: siempre ALTO para accesos no autorizados."""
         self.riesgo = "ALTO"
         return self.riesgo
 
     def get_recomendaciones(self):
-        """Retorna recomendaciones estándar para acceso no autorizado."""
         return ["Revocar permisos", "Auditar logs"]
 
     

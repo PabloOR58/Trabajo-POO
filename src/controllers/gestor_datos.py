@@ -26,7 +26,6 @@ class GestorIncidencias:
         self.cargar_desde_csv()
 
     def registrar(self, incidencia):
-        """Añade una incidencia válida al gestor."""
         if not isinstance(incidencia, Incidencia):
             raise GestorDatosException("Solo se pueden registrar objetos de tipo Incidencia")
 
@@ -37,34 +36,27 @@ class GestorIncidencias:
         return incidencia
 
     def listar(self):
-        """Devuelve la lista de incidencias registradas."""
         return list(self.incidencias)
 
     def buscar_por_id(self, id_incidencia):
-        """Busca una incidencia por su ID."""
         for inc in self.incidencias:
             if inc.id == id_incidencia:
                 return inc
         return None
 
     def filtrar_por_tipo(self, tipo):
-        """Filtra incidencias por tipo de clase."""
         return [inc for inc in self.incidencias if type(inc).__name__ == tipo]
 
     def filtrar_por_riesgo(self, riesgo):
-        """Filtra incidencias por nivel de riesgo."""
         return [inc for inc in self.incidencias if inc.calcular_riesgo() == riesgo]
 
     def limpiar_todas(self):
-        """Elimina todas las incidencias del gestor."""
         self.incidencias = []
 
     def eliminar_por_id(self, id_incidencia):
-        """Elimina una incidencia por ID."""
         self.incidencias = [inc for inc in self.incidencias if inc.id != id_incidencia]
 
     def to_dataframe(self):
-        """Convierte la lista de incidencias a un DataFrame."""
         datos = []
         for inc in self.incidencias:
             datos.append({
@@ -80,7 +72,6 @@ class GestorIncidencias:
         return pd.DataFrame(datos)
 
     def guardar_csv(self, ruta=None):
-        """Guarda todas las incidencias en un archivo CSV."""
         ruta = ruta or self.ruta_csv
         df = self.to_dataframe()
         os.makedirs(os.path.dirname(ruta), exist_ok=True)
@@ -89,7 +80,6 @@ class GestorIncidencias:
         return ruta
 
     def guardar_json(self, ruta="data/incidencias.json"):
-        """Guarda todas las incidencias en un archivo JSON."""
         datos = []
         for inc in self.incidencias:
             datos.append({
@@ -109,7 +99,6 @@ class GestorIncidencias:
         return ruta
 
     def cargar_desde_csv(self, ruta=None):
-        """Carga incidencias desde un archivo CSV y las convierte en objetos."""
         ruta = ruta or self.ruta_csv
         self.incidencias = []
 
@@ -124,7 +113,6 @@ class GestorIncidencias:
         return self.incidencias
 
     def cargar_desde_json(self, ruta="data/incidencias.json"):
-        """Carga incidencias desde un archivo JSON y las convierte en objetos."""
         self.incidencias = []
 
         if not os.path.exists(ruta):
@@ -144,6 +132,7 @@ class GestorIncidencias:
 
     def _crear_incidencia_desde_fila(self, fila):
         return self._crear_incidencia_desde_dict(fila.to_dict())
+    
 
     def _crear_incidencia_desde_dict(self, datos):
         # Convierte un valor a string de forma segura
@@ -229,7 +218,6 @@ class GestorIncidencias:
         return None
 
     def get_estadisticas(self):
-        """Calcula estadísticas básicas por riesgo y tipo."""
         df = self.to_dataframe()
         if df.empty:
             return {}
